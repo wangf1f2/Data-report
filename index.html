@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Report</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Monthly Report</h1>
+        <form id="login-form">
+            <label for="oa_login_name">OA Login Name:</label>
+            <input type="text" id="oa_login_name" name="oa_login_name" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="report-content" style="display:none;">
+            <p id="greeting"></p>
+            <p>上月你提交了<span id="total-processes"></span>个流程。</p>
+            <p>这三个流程是你上月经常提的流程：</p>
+            <ul id="top-processes"></ul>
+            <p>有<span id="finished-processes"></span>个流程已经结束。</p>
+            <p>有<span id="rejected-processes"></span>个流程已经被驳回。</p>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#login-form').on('submit', function(event) {
+                event.preventDefault();
+                var oa_login_name = $('#oa_login_name').val();
+                $.ajax({
+                    url: 'https://your-api-endpoint', // 替换为你的API端点
+                    method: 'POST',
+                    data: { oa_login_name: oa_login_name },
+                    success: function(data) {
+                        $('#greeting').text(data.name + '你好，');
+                        $('#total-processes').text(data.total_processes);
+                        $('#finished-processes').text(data.finished_processes);
+                        $('#rejected_processes').text(data.rejected_processes);
+                        $('#top-processes').empty();
+                        data.top_processes.forEach(function(process) {
+                            $('#top-processes').append('<li>' + process.fd_name + '（' + process.total + '次）</li>');
+                        });
+                        $('#report-content').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
